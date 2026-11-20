@@ -1,0 +1,128 @@
+# AtlasClub Campus (club.atlas-si.com) — Production Docker Compose
+# Baseado em LearnHouse (AGPL-3.0). Portas expostas apenas em 127.0.0.1 para proxy Caddy/TLS.
+name: atlas-club-prod
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: atlasclub-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-atlasclub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-atlasclub}
+    volumes:
+      - atlasclub_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-atlasclub} -d ${POSTGRES_DB:-atlasclub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [club_net]
+
+  redis:
+    image: redis:7-alpine
+    container_name: atlasclub-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - atlasclub_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [club_net]
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile
+      args:
+        LEARNHOUSE_PUBLIC: "true"
+    container_name: atlasclub-api
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      LEARNHOUSE_SQL_CONNECTION_STRING: postgresql+asyncpg://${POSTGRES_USER:-atlasclub}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-atlasclub}
+      LEARNHOUSE_REDIS_CONNECTION_STRING: redis://redis:6379/0
+      LEARNHOUSE_PORT: "9000"
+      HOSTNAME: "0.0.0.0"
+      LEARNHOUSE_AUTH_JWT_SECRET_KEY: ${LEARNHOUSE_AUTH_JWT_SECRET_KEY}
+      COLLAB_INTERNAL_KEY: ${COLLAB_INTERNAL_KEY}
+      LEARNHOUSE_SITE_NAME: ${LEARNHOUSE_SITE_NAME:-AtlasClub}
+      LEARNHOUSE_DOMAIN: ${LEARNHOUSE_DOMAIN:-club.atlas-si.com}
+      LEARNHOUSE_FRONTEND_DOMAIN: ${LEARNHOUSE_FRONTEND_DOMAIN:-club.atlas-si.com}
+      LEARNHOUSE_PUBLIC_URL: ${LEARNHOUSE_PUBLIC_URL:-https://club.atlas-si.com}
+      LEARNHOUSE_COOKIE_DOMAIN: ${LEARNHOUSE_COOKIE_DOMAIN:-.atlas-si.com}
+      LEARNHOUSE_SSL: ${LEARNHOUSE_SSL:-true}
+      LEARNHOUSE_TENANCY: ${LEARNHOUSE_TENANCY:-multi}
+      LEARNHOUSE_SAAS: ${LEARNHOUSE_SAAS:-true}
+      LEARNHOUSE_ALLOWED_ORIGINS: ${LEARNHOUSE_ALLOWED_ORIGINS:-https://club.atlas-si.com}
+      LEARNHOUSE_OSS: "true"
+      LEARNHOUSE_INITIAL_ADMIN_EMAIL: ${LEARNHOUSE_INITIAL_ADMIN_EMAIL}
+      LEARNHOUSE_INITIAL_ADMIN_PASSWORD: ${LEARNHOUSE_INITIAL_ADMIN_PASSWORD}
+    ports:
+      - "127.0.0.1:1348:9000"
+    volumes:
+      - atlasclub_content:/app/content
+      - atlasclub_logs:/app/logs
+    networks: [club_net]
+
+  collab:
+    build:
+      context: ../../apps/collab
+      dockerfile: Dockerfile
+    container_name: atlasclub-collab
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      NODE_ENV: production
+      COLLAB_PORT: "4000"
+      COLLAB_INTERNAL_KEY: ${COLLAB_INTERNAL_KEY}
+      LEARNHOUSE_REDIS_CONNECTION_STRING: redis://redis:6379/0
+      LEARNHOUSE_API_URL: http://api:9000
+    ports:
+      - "127.0.0.1:4000:4000"
+    networks: [club_net]
+
+  web:
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+      args:
+        LEARNHOUSE_PUBLIC: "true"
+    container_name: atlasclub-web
+    restart: unless-stopped
+    depends_on:
+      - api
+      - collab
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      NEXTAUTH_URL: ${LEARNHOUSE_PUBLIC_URL:-https://club.atlas-si.com}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_LEARNHOUSE_OSS: "true"
+      NEXT_PUBLIC_LEARNHOUSE_DOMAIN: ${LEARNHOUSE_DOMAIN:-club.atlas-si.com}
+      NEXT_PUBLIC_LEARNHOUSE_HTTPS: "true"
+      NEXT_PUBLIC_LEARNHOUSE_BACKEND_URL: ${NEXT_PUBLIC_LEARNHOUSE_BACKEND_URL:-https://club.atlas-si.com/api/v1}
+      NEXT_PUBLIC_LEARNHOUSE_COLLAB_URL: ${NEXT_PUBLIC_LEARNHOUSE_COLLAB_URL:-wss://club.atlas-si.com/collab}
+      NEXT_PUBLIC_ATLAS_CLUBOS_BRAND: "true"
+      LEARNHOUSE_BACKEND_URL: http://api:9000/api/v1
+    ports:
+      - "127.0.0.1:3010:3000"
+    networks: [club_net]
+
+volumes:
+  atlasclub_pgdata:
+  atlasclub_redis:
+  atlasclub_content:
+  atlasclub_logs:
+
+networks:
+  club_net:
+    driver: bridge

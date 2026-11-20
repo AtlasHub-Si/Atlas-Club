@@ -1,0 +1,21 @@
+/* AtlasClub Official Brand Theme Tokens — Midnight Navy & Atlas Electric Blue */
+:root {
+  --atlas-bg-primary: #030c1c;
+  --atlas-bg-secondary: #061836;
+  --atlas-surface: #0a2248;
+  --atlas-border: rgba(0, 168, 255, 0.24);
+  --atlas-electric-blue: #0099ff;
+  --atlas-cyan: #00d4ff;
+  --atlas-gold: #ffb84d;
+  --atlas-alert-red: #e5192c;
+  --atlas-text-primary: #f3f7ff;
+  --atlas-text-muted: #8fb0da;
+}
+
+.atlas-club-header-badge {
+  background: linear-gradient(135deg, var(--atlas-bg-secondary), var(--atlas-surface));
+  border: 1px solid var(--atlas-border);
+  color: var(--atlas-cyan);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
