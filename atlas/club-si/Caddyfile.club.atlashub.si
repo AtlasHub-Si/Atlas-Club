@@ -1,8 +1,8 @@
-# Reverse proxy Caddy para AtlasClub (club.atlas-si.com)
+# Reverse proxy Caddy para AtlasClub (club.atlashub.si)
 # Nota: /api/auth/* e /api/revalidate pertencem ao Next.js (3010);
 # apenas /api/v1* e /content* vão para o backend FastAPI (1348).
 
-club.atlas-si.com {
+club.atlashub.si {
 	encode gzip
 
 	handle /api/v1* {
