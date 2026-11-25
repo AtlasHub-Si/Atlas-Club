@@ -1,3 +1,13 @@
+# AtlasClub — Community, Learning & AI Adoption
+
+**Learn. Build. Connect.**
+
+AtlasClub is the education and community world of AtlasHub. The intended roadmap includes learning programs, practical AI adoption, AtlasWorkforce team discovery and distribution. LearnHouse is the current evaluation foundation; deployment, commercial use and enterprise features require license and operational review. Its AGPL-3.0 license must not be replaced by Apache 2.0.
+
+The following upstream documentation describes LearnHouse, not released AtlasClub functionality.
+
+## Upstream engineering reference
+
 <p align="center">
   <a href="https://learnhouse.app">
     <img src=".github/images/learnhouse-github.png" alt="LearnHouse" width="600" />
@@ -140,3 +150,8 @@ Thank you and have fun using/developing/testing LearnHouse !
 ## 📄 License
 
 [AGPL-3.0](LICENSE). Enterprise features are available under a separate Enterprise License.
+
+
+---
+**AtlasHub · Augmented Enterprise · Unified Intelligence** | [Official website](https://atlashub.si) · [Atlas Galaxy](https://github.com/AtlasHub-Si/AtlasHub-Command-Center)
+London · Lisbon · Goiânia | AtlasGlobal Tech LTD · AtlasHub Brasil
