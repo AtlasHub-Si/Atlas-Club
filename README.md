@@ -1,5 +1,7 @@
 # AtlasClub — Community, Learning & AI Adoption
 
+> **Atlas Intelligence integration.** Club may distribute approved, licensed, explicitly shareable educational derivatives and team templates from the Atlas ecosystem. Never expose private study content or operational records; course delivery belongs in Club.
+
 **Learn. Build. Connect.**
 
 AtlasClub is the education and community world of AtlasHub. The intended roadmap includes learning programs, practical AI adoption, AtlasWorkforce team discovery and distribution. LearnHouse is the current evaluation foundation; deployment, commercial use and enterprise features require license and operational review. Its AGPL-3.0 license must not be replaced by Apache 2.0.
