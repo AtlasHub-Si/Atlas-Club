@@ -110,10 +110,10 @@ services:
       NEXT_PUBLIC_LEARNHOUSE_OSS: "true"
       NEXT_PUBLIC_LEARNHOUSE_DOMAIN: ${LEARNHOUSE_DOMAIN:-club.atlashub.si}
       NEXT_PUBLIC_LEARNHOUSE_HTTPS: "true"
-      NEXT_PUBLIC_LEARNHOUSE_BACKEND_URL: ${NEXT_PUBLIC_LEARNHOUSE_BACKEND_URL:-https://club.atlashub.si/api/v1}
+      NEXT_PUBLIC_LEARNHOUSE_BACKEND_URL: ${NEXT_PUBLIC_LEARNHOUSE_BACKEND_URL:-https://club.atlashub.si}
       NEXT_PUBLIC_LEARNHOUSE_COLLAB_URL: ${NEXT_PUBLIC_LEARNHOUSE_COLLAB_URL:-wss://club.atlashub.si/collab}
       NEXT_PUBLIC_ATLAS_CLUBOS_BRAND: "true"
-      LEARNHOUSE_BACKEND_URL: http://api:9000/api/v1
+      LEARNHOUSE_BACKEND_URL: http://api:9000
     ports:
       - "127.0.0.1:3010:3000"
     networks: [club_net]
